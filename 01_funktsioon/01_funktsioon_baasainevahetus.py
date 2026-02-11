@@ -11,6 +11,7 @@ def baasainevahetus():
     else:
       bmr = 10 * kaal + 6.25 * pikkus - 5 * vanus - 161
     
-    print(f"\nSinu kulutad päevas {round(bmr)} kalorit, lihtsalt elades")
+    print(f"\nSina kulutad päevas {round(bmr)} kalorit, lihtsalt elades")
+
 
 baasainevahetus()
