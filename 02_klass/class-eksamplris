@@ -1,0 +1,38 @@
+class Isik:
+    def __init__(self, nimi, pikkus_meetrites, algkaal_kg):
+        self.nimi = nimi
+        self.pikkus = pikkus_meetrites
+        self.bmi_ajalugu = []
+        self.lisa_kaal(algkaal_kg)
+
+    def arvuta_bmi(self, kaal):
+        return kaal / (self.pikkus ** 2)
+
+    def lisa_kaal(self, kaal):
+        bmi = self.arvuta_bmi(kaal)
+        self.bmi_ajalugu.append(bmi)
+
+    def bmi_muutus(self):
+        if len(self.bmi_ajalugu) < 2:
+            return 0
+        return self.bmi_ajalugu[-1] - self.bmi_ajalugu[0]
+
+    def kuva_analüüs(self):
+        print(f"Nimi: {self.nimi}")
+        print(f"BMI ajalugu: {[round(b, 2) for b in self.bmi_ajalugu]}")
+        print(f"Algne BMI: {self.bmi_ajalugu[0]:.2f}")
+        print(f"Viimane BMI: {self.bmi_ajalugu[-1]:.2f}")
+        print(f"Muutus: {self.bmi_muutus():+.2f}")
+        print("-" * 35)
+
+isik1 = Isik("Uku", 1.87, 80)
+isik2 = Isik("Markus P", 1.40, 100)
+
+isik1.lisa_kaal(64)
+isik1.lisa_kaal(63)
+isik2.lisa_kaal(92)
+isik2.lisa_kaal(90)
+
+isik1.kuva_analüüs()
+isik2.kuva_analüüs()
+
