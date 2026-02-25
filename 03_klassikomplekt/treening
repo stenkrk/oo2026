@@ -1,0 +1,51 @@
+class Workout:
+    def __init__(self, date, exercise, duration, calories):
+        self.date = date
+        self.exercise = exercise
+        self.duration = duration 
+        self.calories = calories
+
+    def __str__(self):
+        return (
+            f"{self.date} | {self.exercise} | "
+            f"{self.duration} min | {self.calories} kcal"
+        )
+class WorkoutLog:
+    def __init__(self, owner):
+        self.owner = owner
+        self.workouts = []
+
+    def add_workout(self, workout):
+        self.workouts.append(workout)
+        print(f"Treening '{workout.exercise}' lisatud.")
+
+    def show_workouts(self):
+        print(f"\n--- Treening {self.owner} ---")
+        if not self.workouts:
+            print("Pole midagi.")
+        for workout in self.workouts:
+            print(workout)
+        print("----------------------------------")
+
+    def total_calories(self):
+        total = 0
+        for workout in self.workouts:
+            total += workout.calories
+        return total
+
+def main():
+    my_log = WorkoutLog("Inimene 1")
+    w1 = Workout("2026-02-10", "Jooksmine", 45, 420)
+    w2 = Workout("2026-02-12", "Jõusaal", 60, 350)
+    w3 = Workout("2026-02-14", "Ujumine", 30, 300)
+
+    my_log.add_workout(w1)
+    my_log.add_workout(w2)
+    my_log.add_workout(w3)
+
+    my_log.show_workouts()
+
+    print(f"Kcal põletatud: {my_log.total_calories()} kcal")
+
+if __name__ == "__main__":
+    main()
