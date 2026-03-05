@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+class Akvaarium {
+
+    constructor(pikkus, laius, korgus){
+        this.pikkus = pikkus;
+        this.laius = laius;
+        this.korgus = korgus;
+        this.vesi = 0;
+    }
+
+    ruumala(){
+        return this.pikkus * this.laius * this.korgus;
+    }
+
+    lisaVett(kogus){
+        if(this.vesi + kogus > this.ruumala()){
+            this.vesi = this.ruumala();
+            return "Vesi laheb ule aare!";
+        }
+        this.vesi += kogus;
+        return "Vett lisatud";
+    }
+
+    eemaldaVett(kogus){
+        if(this.vesi - kogus < 0){
+            this.vesi = 0;
+            return "akvaarium sai tuhjaks!!!!!";
+        }
+        this.vesi -= kogus;
+        return "Vett eemaldatud";
+    }
+
+}
+
+let akv;
+
+function algus(){
+    akv = new Akvaarium(10,10,10);
+    uuenda();
+}
+
+function lisa(){
+    let kogus = Number(document.getElementById("kogus").value);
+    let teade = akv.lisaVett(kogus);
+    document.getElementById("teade").innerText = teade;
+    uuenda();
+}
+
+function eemalda(){
+    let kogus = Number(document.getElementById("kogus").value);
+    let teade = akv.eemaldaVett(kogus);
+    document.getElementById("teade").innerText = teade;
+    uuenda();
+}
+
+function uuenda(){
+     document.getElementById("vesi").innerText = akv.vesi;
+     document.getElementById("ruumala").innerText = akv.ruumala(); 
+}
+
+</script>
+</head>
+
+<body onload="algus()">
+
+<h2>Akvaarium</h2>
+
+<p>Ruumala: <span id="ruumala"></span></p>
+<p>Vett akvaariumis: <span id="vesi"></span></p>
+
+<input type="number" id="kogus" value="100">
+
+<br><br>
+
+<input type="button" value="Lisa vett" onclick="lisa()">
+<input type="button" value="Eemalda vett" onclick="eemalda()">
+
+<p id="teade"></p>
+
+</body>
+</html>
