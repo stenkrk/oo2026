@@ -1,0 +1,83 @@
+class Taevakeha:
+    def __init__(self, nimi):
+        self.nimi = nimi
+        self._vaadeldav = False
+
+    def alusta_vaatlust(self):
+        self._vaadeldav = True
+        print(f"{self.nimi} on nüüd vaatluse all.")
+
+    def lopeta_vaatlus(self):
+        self._vaadeldav = False
+        print(f"{self.nimi} ei ole enam vaadeldav.")
+
+    def __str__(self):
+        return f"Taevakeha: {self.nimi}"
+
+
+class Planeet(Taevakeha):
+    def __init__(self, nimi, kaugus):
+        super().__init__(nimi)
+        self.kaugus = kaugus  
+
+    def kuva_andmed(self):
+        print(f"{self.nimi} kaugus Päikesest: {self.kaugus} miljonit km")
+
+
+class KivinePlaneet(Planeet):
+    def __init__(self, nimi, kaugus, atmosfaar):
+        super().__init__(nimi, kaugus)
+        self.atmosfaar = atmosfaar  
+
+    def kontrolli_atmosfaari(self):
+        if self._vaadeldav:
+            if self.atmosfaar:
+                print(f"{self.nimi}l on atmosfäär.")
+            else:
+                print(f"{self.nimi}l puudub atmosfäär.")
+        else:
+            print("Planeeti peab enne vaatlema!")
+
+
+class GaasiPlaneet(Planeet):
+    def __init__(self, nimi, kaugus, kuude_arv):
+        super().__init__(nimi, kaugus)
+        self.kuude_arv = kuude_arv
+
+    def kuva_kuud(self):
+        if self._vaadeldav:
+            print(f"{self.nimi}l on {self.kuude_arv} kuud.")
+        else:
+            print("Planeeti peab enne vaatlema!")
+
+
+if __name__ == "__main__":
+    print("--- Kosmose objektide süsteem ---\n")
+
+    maa = KivinePlaneet("Maa", 150, True)
+    veenus = KivinePlaneet("Veenus", 108, True)
+    jupiter = GaasiHiid("Jupiter", 778, 95)
+
+    # Maa
+    print(maa)
+    maa.kontrolli_atmosfaari()
+    maa.alusta_vaatlust()
+    maa.kuva_andmed()
+    maa.kontrolli_atmosfaari()
+
+    print("-" * 30)
+
+    # Veenus
+    print(veenus)
+    veenus.alusta_vaatlust()
+    veenus.kuva_andmed()
+    veenus.kontrolli_atmosfaari()
+
+    print("-" * 30)
+
+    # Jupiter
+    print(jupiter)
+    jupiter.kuva_kuud()
+    jupiter.alusta_vaatlust()
+    jupiter.kuva_andmed()
+    jupiter.kuva_kuud()
