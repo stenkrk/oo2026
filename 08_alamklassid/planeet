@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     maa = KivinePlaneet("Maa", 150, True)
     veenus = KivinePlaneet("Veenus", 108, True)
-    jupiter = GaasiHiid("Jupiter", 778, 95)
+    jupiter = GaasiPlaneet("Jupiter", 778, 95)
 
     # Maa
     print(maa)
