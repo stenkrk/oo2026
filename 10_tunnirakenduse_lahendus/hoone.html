@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <title>Hoone soojusarvutus</title>
+  <style>
+    body  { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    .box  { border: 1px solid #999; background: #fff; padding: 16px;
+            display: inline-block; width: 540px; }
+    canvas { display: block; margin-bottom: 14px; background: #fff; }
+    .controls { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+    .row  { display: flex; align-items: center; gap: 8px; }
+    .lbl  { min-width: 180px; color: #444; }
+    input[type=range] { width: 180px; }
+    .val  { min-width: 60px; font-weight: 500; color: #2255aa; }
+    hr    { border: none; border-top: 1px solid #ddd; margin: 10px 0; }
+  </style>
+  <script src="materialAmount.js"></script>
+  <script>
+    function draw() {
+      const canvas = document.getElementById("canvas1");
+      const ctx    = canvas.getContext("2d");
+
+      const radMass = parseFloat(document.getElementById("sRadMass").value);
+      const radTemp = parseFloat(document.getElementById("sRadTemp").value);
+      const roomT   = parseFloat(document.getElementById("sRoomTemp").value);
+      const l       = parseFloat(document.getElementById("sL").value);
+      const w       = parseFloat(document.getElementById("sW").value);
+      const h       = parseFloat(document.getElementById("sH").value);
+      const minutes = parseFloat(document.getElementById("sTime").value);
+
+      document.getElementById("vRadMass").textContent = radMass + " kg";
+      document.getElementById("vRadTemp").textContent = radTemp + " °C";
+      document.getElementById("vRoomTemp").textContent = roomT + " °C";
+      document.getElementById("vL").textContent = l + " m";
+      document.getElementById("vW").textContent = w + " m";
+      document.getElementById("vH").textContent = h + " m";
+      document.getElementById("vTime").textContent = minutes + " min";
+
+      const rad  = new MaterialAmount(radMass, 412, radTemp);
+      const room = new RoomAir(l, w, h, roomT);
+
+      const k = radMass * 412 / 60 / 20;
+
+      for (let t = 0; t < minutes * 60; t++) {
+        const diff = rad.getTemperature() - room.getTemperature();
+        if (diff <= 0) break;
+        const dQ = k * diff;
+        rad.changeEnergy(-dQ);
+        room.changeEnergy(dQ);
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const rx = 60, ry = 20, rw = 80, rh = 60;
+      const heat = Math.min((rad.getTemperature() - 20) / 60, 1);
+      ctx.fillStyle = `rgb(${Math.round(180 + 75 * heat)}, ${Math.round(200 - 150 * heat)}, ${Math.round(220 - 180 * heat)})`;
+      ctx.strokeStyle = "#555";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(rx, ry, rw, rh);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = "#888";
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(rx + i * rw / 4, ry);
+        ctx.lineTo(rx + i * rw / 4, ry + rh);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#222";
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Radiaator", rx + rw / 2, ry - 6);
+      ctx.font = "11px sans-serif";
+      ctx.fillText(rad.getTemperature().toFixed(2) + " °C", rx + rw / 2, ry + rh / 2 - 6);
+      ctx.fillText(radMass + " kg raud", rx + rw / 2, ry + rh / 2 + 8);
+
+      const tx = 200, ty = 10, tw = 300, th = 90;
+      ctx.fillStyle = `rgba(255, ${Math.round(220 - 80 * (room.getTemperature() - roomT) / 10)}, 180, 0.3)`;
+      ctx.strokeStyle = "#888";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(tx, ty, tw, th);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#222";
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`Tuba ${l}×${w}×${h} m`, tx + tw / 2, ty + 20);
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Õhk: " + room.getTemperature().toFixed(3) + " °C", tx + tw / 2, ty + 42);
+      ctx.fillText("Maht: " + (l * w * h).toFixed(1) + " m³", tx + tw / 2, ty + 58);
+      ctx.fillText("Mass: " + (l * w * h * 1.23).toFixed(1) + " kg", tx + tw / 2, ty + 74);
+
+      ctx.strokeStyle = "#c44";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(rx + rw, ry + rh / 2);
+      ctx.lineTo(tx, ty + th / 2);
+      ctx.stroke();
+      ctx.fillStyle = "#c44";
+      ctx.beginPath();
+      ctx.moveTo(tx, ty + th / 2);
+      ctx.lineTo(tx - 10, ty + th / 2 - 5);
+      ctx.lineTo(tx - 10, ty + th / 2 + 5);
+      ctx.fill();
+
+      ctx.fillStyle = "#c44";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("soojus →", rx + rw + (tx - rx - rw) / 2, ry + rh / 2 - 6);
+    }
+
+    window.onload = draw;
+  </script>
+</head>
+<body>
+  <p style="font-size:14px; margin-bottom:8px;">Arvutamise graafiline abiline — hoone soojus</p>
+  <div class="box">
+    <canvas id="canvas1" width="520" height="110"></canvas>
+    <div class="controls">
+      <div class="row">
+        <span class="lbl">Radiaatori mass</span>
+        <input type="range" id="sRadMass" min="1" max="30" value="10" step="1" oninput="draw()">
+        <span class="val" id="vRadMass">10 kg</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Radiaatori algtemp.</span>
+        <input type="range" id="sRadTemp" min="20" max="80" value="40" step="1" oninput="draw()">
+        <span class="val" id="vRadTemp">40 °C</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Toa algtemp.</span>
+        <input type="range" id="sRoomTemp" min="5" max="25" value="20" step="1" oninput="draw()">
+        <span class="val" id="vRoomTemp">20 °C</span>
+      </div>
+      <hr>
+      <div class="row">
+        <span class="lbl">Toa pikkus</span>
+        <input type="range" id="sL" min="2" max="8" value="4" step="0.5" oninput="draw()">
+        <span class="val" id="vL">4 m</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Toa laius</span>
+        <input type="range" id="sW" min="2" max="8" value="3" step="0.5" oninput="draw()">
+        <span class="val" id="vW">3 m</span>
+      </div>
+      <div class="row">
+        <span class="lbl">Toa kõrgus</span>
+        <input type="range" id="sH" min="2" max="4" value="2.5" step="0.1" oninput="draw()">
+        <span class="val" id="vH">2.5 m</span>
+      </div>
+      <hr>
+      <div class="row">
+        <span class="lbl">Simulatsiooni aeg</span>
+        <input type="range" id="sTime" min="1" max="60" value="10" step="1" oninput="draw()">
+        <span class="val" id="vTime">10 min</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

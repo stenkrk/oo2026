@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <title>Graafiline jadaühendus</title>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
+    h2   { font-size: 15px; font-weight: 500; color: #333; margin: 18px 0 4px; }
+    canvas { display: block; background: #fff; border: 1px solid #ccc;
+             border-radius: 6px; margin-bottom: 12px; }
+  </style>
+  <script src="jada1.js"></script>
+  <script>
+    function startPage() {
+      const sc1 = new SeriesCircuit(canvas1.getContext("2d"), 10, 40);
+      sc1.push(new Resistor(110));
+      sc1.push(new Resistor(220));
+
+      const sc2 = new SeriesCircuit(canvas2.getContext("2d"), 10, 40);
+      sc2.push(new Resistor(110));
+      sc2.push(new Resistor(220));
+      sc2.push(new Resistor(50));
+
+      const ctx3 = canvas3.getContext("2d");
+
+      const sc3a = new SeriesCircuit(ctx3, 10, 40);
+      sc3a.push(new Resistor(47));
+      sc3a.push(new Resistor(100));
+      sc3a.push(new Resistor(220));
+
+      const sc3b = new SeriesCircuit(ctx3, 10, 130);
+      sc3b.push(new Resistor(330));
+      sc3b.push(new Resistor(68));
+    }
+  </script>
+</head>
+<body onload="startPage()">
+  <h2>Harjutus 1 &amp; 2 — algne näide (110Ω + 220Ω)</h2>
+  <canvas id="canvas1" width="400" height="90"></canvas>
+
+  <h2>Harjutus 3 — kolm takistit (110Ω + 220Ω + 50Ω)</h2>
+  <canvas id="canvas2" width="400" height="90"></canvas>
+
+  <h2>Harjutus 4 — kaks jadaühendust kõrvuti</h2>
+  <canvas id="canvas3" width="400" height="200"></canvas>
+</body>
+</html>
